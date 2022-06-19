@@ -1,0 +1,18 @@
+spring:
+  datasource:
+    driver-class-name: org.h2.Driver
+    password: test
+    username: test
+    url: jdbc:h2:mem:bdd-bank
+  h2:
+    console:
+      enabled: true
+  jpa:
+    database: h2
+    database-platform: org.hibernate.dialect.H2Dialect
+    hibernate:
+      ddl-auto: none
+    open-in-view: true
+  liquibase:
+    change-log: "classpath:/db/changelog/changelog-master.yml"
+

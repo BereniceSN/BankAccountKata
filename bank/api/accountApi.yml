@@ -1,0 +1,197 @@
+openapi: 3.0.2
+info:
+  title: Account API
+  version: 1.0.0
+  description: Manage money in account
+paths:
+  /api/account/{idAccount}:
+    summary: Path used to get the account status.
+    description: The REST endpoint/path used.
+    get:
+      parameters:
+      - name: idAccount
+        description: Unique id to get the informations of a specific account.
+        schema:
+          type: string
+        in: path
+        required: true
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Account'
+          description: Successful response - returns an account informations.
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BadRequestErrorResponse'
+          description: Invalid parameter
+        '500':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BadRequestErrorResponse'
+          description: The account can not be retrieve do to a server problem.
+      operationId: getAccount
+      summary: Return the specific account
+      description: Return the specific account
+  /api/account/{idAccount}/save:
+    summary: Path used to save money in account.
+    description: The REST endpoint/path used.
+    post:
+      parameters:
+      - name: idAccount
+        description: Unique id to get the informations of a specific account.
+        schema:
+          type: string
+        in: path
+        required: true
+      - name: amount
+        description: Amount to save in bank account.
+        schema:
+          type: number
+        in: query
+        required: true
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: boolean
+          description: Successful response.
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BadRequestErrorResponse'
+          description: Invalid parameter
+        '500':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BadRequestErrorResponse'
+          description: server problem during save operation.
+      operationId: saveInAccount
+      summary: save money in account
+      description: save money in account
+      
+  /api/account/{idAccount}/withdraw:
+    summary: Path used to withdraw money from account.
+    description: The REST endpoint/path used.
+    post:
+      parameters:
+      - name: idAccount
+        description: Unique id to get the informations of a specific account.
+        schema:
+          type: string
+        in: path
+        required: true
+      - name: amount
+        description: Amount to withdraw from bank account.
+        schema:
+          type: number
+        in: query
+        required: true
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: boolean
+          description: Successful response.
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BadRequestErrorResponse'
+          description: Invalid parameter
+        '500':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BadRequestErrorResponse'
+          description: server problem during save operation.
+      operationId: withdrawFromAccount
+      summary: withdraw money from account
+      description: withdraw money from account
+  /api/account/{idAccount}/transactions:
+    summary: Path used to get all the transactions on account.
+    description: The REST endpoint/path used.
+    get:
+      parameters:
+      - name: idAccount
+        description: Unique id to get the transactions of a specific account.
+        schema:
+          type: string
+        in: path
+        required: true
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                    $ref: '#/components/schemas/Transaction'
+          description: Successful response - returns all account's transactions.
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BadRequestErrorResponse'
+          description: Invalid parameter
+        '500':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BadRequestErrorResponse'
+          description: The account can not be retrieve do to a server problem.
+      operationId: getAllAccountTransactions
+      summary: Return all the transactions
+      description: Return all the transactions 
+components:
+  schemas:
+    Account:
+      title: Root Type for Account
+      description: Account object
+      required: []
+      type: object
+      properties:
+        name:
+          description: account user name
+          type: string
+        balance:
+          description: account balance
+          type: string
+        transactions:
+          description: account history transactions
+          type: array
+          items:
+            $ref: '#/components/schemas/Transaction'
+    Transaction:
+      title: transaction history 
+      description: Transaction object
+      required: []
+      type: object
+      properties:
+        operation:
+          description: Type of bank operation.
+          type: string
+          enum:
+            - SAVE
+            - WITHDRAW
+        date:
+          description: The day when the transaction was made.
+          type: Date
+        amount:
+           description: The amount of the transaction.
+           type: string
+    BadRequestErrorResponse:
+      description: error response
+      type: object
+      properties:
+        description:
+          description: ''
+          type: string
