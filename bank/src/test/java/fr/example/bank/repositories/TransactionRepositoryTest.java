@@ -27,21 +27,18 @@ import fr.example.bank.entities.TransactionBdd;
 @DataJpaTest
 class TransactionRepositoryTest {
 	
-	private static final int ACCOUNT_ID = 1;
+	int account1Id = 1;
 	private static final String NAME = "testeur";
 	private static final long BALANCE = 1000l;
-	private static final int TRANSACTION_ID = 1;
 	private static final Date DATE_TRANSACTION = new Date();
 	private static final String OPERATION = "SAVE";
 	private static final long AMOUNT=100l;
 	
-	private static final int ACCOUNT_ID_2 = 2;
+	int account2Id = 2;
 	private static final String NAME_2 = "testeur2";
 	private static final long BALANCE_2 = 100l;
-	private static final int TRANSACTION_ID_2 = 2;
 	private static final String OPERATION_2 = "SAVE";
 	private static final long AMOUNT_2=20l;
-	private static final int TRANSACTION_ID_3 = 3;
 	private static final String OPERATION_3 = "WITHDRAW";
 
 	
@@ -56,36 +53,33 @@ class TransactionRepositoryTest {
 	 */
 	@BeforeEach
 	void setUp() throws Exception {
-		accountRepository.deleteAll();
 		AccountBdd account1 = new AccountBdd();
-		account1.setId(ACCOUNT_ID);
 		account1.setBalance(BALANCE);
 		account1.setName(NAME);
-		accountRepository.save(account1);
+		account1 = accountRepository.save(account1);
+		account1Id = account1.getId();
+		AccountBdd account2 = new AccountBdd();
+		account2.setBalance(BALANCE_2);
+		account2.setName(NAME_2);
+		account2 = accountRepository.save(account2);
+		account2Id = account2.getId();
+
 		TransactionBdd transactionBdd = new TransactionBdd();
-		transactionBdd.setId(TRANSACTION_ID);
-		transactionBdd.setAccountId(ACCOUNT_ID);
+		transactionBdd.setAccountId(account1Id);
 		transactionBdd.setAmount(AMOUNT);
 		transactionBdd.setDateTransaction(DATE_TRANSACTION);
 		transactionBdd.setOperation(OPERATION);
 		transactionRepository.save(transactionBdd);
 		
-		AccountBdd account2 = new AccountBdd();
-		account2.setId(ACCOUNT_ID_2);
-		account2.setBalance(BALANCE_2);
-		account2.setName(NAME_2);
-		accountRepository.save(account2);
 		TransactionBdd transactionBdd2 = new TransactionBdd();
-		transactionBdd2.setId(TRANSACTION_ID_2);
-		transactionBdd2.setAccountId(ACCOUNT_ID_2);
+		transactionBdd2.setAccountId(account2Id);
 		transactionBdd2.setAmount(AMOUNT_2);
 		transactionBdd2.setDateTransaction(DATE_TRANSACTION);
 		transactionBdd2.setOperation(OPERATION_2);
 		transactionRepository.save(transactionBdd2);
 		
 		TransactionBdd transactionBdd3 = new TransactionBdd();
-		transactionBdd3.setId(TRANSACTION_ID_3);
-		transactionBdd3.setAccountId(ACCOUNT_ID);
+		transactionBdd3.setAccountId(account1Id);
 		transactionBdd3.setAmount(AMOUNT_2);
 		transactionBdd3.setDateTransaction(DATE_TRANSACTION);
 		transactionBdd3.setOperation(OPERATION_3);
@@ -93,26 +87,21 @@ class TransactionRepositoryTest {
 	}
 
 	@Test
-	void should_return_transaction_when_searchingById() {
+	void should_return_transaction_when_searchingByAccountId() {
 		//given
-		int transactionId = TRANSACTION_ID;
-		
 		//when
-		TransactionBdd transactionBdd = transactionRepository.findById(transactionId).get();
+		List<TransactionBdd> transactions = transactionRepository.findByAccountId(account2Id);
 		
 		//then
-		assertEquals(AMOUNT,transactionBdd.getAmount());
-		assertEquals(ACCOUNT_ID,transactionBdd.getAccountId());
+		assertEquals(AMOUNT_2,transactions.get(0).getAmount());
 	}
 	
 	@Test
 	void should_return_all_transactions_when_searchingByAccountId() {
 		
 		//given
-		int accountId = ACCOUNT_ID;
-		
 		//when
-		List<TransactionBdd> transactions = transactionRepository.findByAccountId(accountId);
+		List<TransactionBdd> transactions = transactionRepository.findByAccountId(account1Id);
 		
 		//then
 		assertNotNull(transactions);
